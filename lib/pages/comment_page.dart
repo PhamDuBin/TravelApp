@@ -181,6 +181,57 @@ class _CommentPageState extends State<CommentPage> {
                                                     CircularProgressIndicator());
                                           }
                                         })),
+                                        Container(
+            alignment: Alignment.bottomRight,
+            margin: const EdgeInsets.all(20),
+            padding: const EdgeInsets.symmetric(horizontal: 15.0),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10.0),
+              border: Border.all(color: Colors.grey),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _textController,
+                    decoration: InputDecoration(
+                      hintText: "Write a message",
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                          borderSide: BorderSide.none),
+                      fillColor: Colors.transparent,
+                    ),
+                    maxLines: null,
+                    keyboardType: TextInputType.multiline,
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.add_a_photo),
+                  onPressed: () async {
+                    final XFile? image =
+                        await picker.pickImage(source: ImageSource.gallery);
+                    setState(() {
+                      imageFile = image != null ? File(image.path) : null;
+                    });
+                  },
+                ),
+                IconButton(
+                  icon: loading
+                      ? const CircularProgressIndicator()
+                      : const Icon(Icons.send),
+                  onPressed: () {
+                    if (imageFile == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                          content: Text("Please select an image")));
+                      return;
+                    }
+                    fromTextAndImage(
+                        query: _textController.text, user: widget.user, image: imageFile!);
+                  },
+                ),
+              ],
+            ),
+          ),
                               ],
                             ),
                           ),
